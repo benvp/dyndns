@@ -22,6 +22,12 @@ defmodule Dyndns.Dns do
     |> Repo.insert()
   end
 
+  def get_latest do
+    query = from e in Entry, order_by: [desc: e.id], limit: 1
+
+    Repo.one(query)
+  end
+
   @doc """
   Returns the list of entries.
 
