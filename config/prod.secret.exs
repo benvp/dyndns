@@ -33,7 +33,7 @@ config :dyndns, DyndnsWeb.Endpoint,
 config :dyndns, Dyndns.Dns,
   host_url: System.get_env("DNS_HOST_URL"),
   domain: System.get_env("DOMAIN"),
-  subdomain: String.split(System.get_env("SUBDOMAINS"), ","),
+  subdomains: String.split(System.get_env("SUBDOMAINS"), ","),
   token: System.get_env("DNS_PROVIDER_TOKEN")
 
 config :dyndns, DyndnsWeb.Router,
