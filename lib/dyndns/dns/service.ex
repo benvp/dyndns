@@ -3,7 +3,7 @@ defmodule Dyndns.Dns.Service do
 
   @base_url @config[:host_url]
   @domain @config[:domain]
-  @subdomain @config[:subdomain]
+  @subdomains @config[:subdomains]
   @token @config[:token]
 
   def get_record_by_name(name) do
@@ -27,7 +27,18 @@ defmodule Dyndns.Dns.Service do
   end
 
   def update(ip) do
-    with {:ok, record} <- get_record_by_name(@subdomain) do
+    updates =
+      @subdomains
+      |> Enum.map(fn d ->
+        {:ok, update} = update_subdomain(d, ip)
+        update
+      end)
+
+    {:ok, updates}
+  end
+
+  defp update_subdomain(subdomain, ip) do
+    with {:ok, record} <- get_record_by_name(subdomain) do
       url = "#{@base_url}/domains/records/#{record["id"]}"
 
       res =

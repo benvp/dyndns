@@ -7,18 +7,13 @@ defmodule DyndnsWeb.DnsController do
     latest = Dns.get_latest()
 
     if latest == nil || latest.ip != ip do
-      case Dns.update_ip(ip) do
-        {:ok, entry} ->
-          conn
-          |> json(%{ip: entry.ip, success: true})
+      :ok = Dns.update_ip(ip)
 
-        _ ->
-          conn
-          |> json(%{ip: nil, success: false})
-      end
+      conn
+      |> json(%{success: true})
     else
       conn
-      |> json(%{ip: latest.ip, success: false})
+      |> json(%{success: false})
     end
   end
 end

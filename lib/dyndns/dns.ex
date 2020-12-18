@@ -13,13 +13,17 @@ defmodule Dyndns.Dns do
   require Logger
 
   def update_ip(ip) do
-    {:ok, %{"value" => new_ip}} = Service.update(ip)
+    {:ok, updates} = Service.update(ip)
 
-    Logger.info("Updated ip to #{new_ip}")
+    Enum.each(updates, fn %{"value" => new_ip} ->
+      Logger.info("Updated ip to #{new_ip}")
+    end)
 
-    %Entry{}
-    |> Entry.changeset(%{ip: new_ip})
-    |> Repo.insert()
+    updates
+    |> Enum.map(fn %{"value" => new_ip} -> Entry.changeset(%Entry{}, %{ip: new_ip}) end)
+    |> Enum.map(&Repo.insert!/1)
+
+    :ok
   end
 
   def get_latest do
